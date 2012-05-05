@@ -165,7 +165,8 @@ eu7 = (filter isPrime [1..]) !! 10001
 --
 -- 8
 --
---Find the greatest product of five consecutive digits in the 1000-digit number.
+-- Find the greatest product of five consecutive digits in 
+-- the 1000-digit number.
 --
 --   73167176531330624919225119674426574742355349194934
 --   96983520312774506326239578318016984801869478851843
@@ -228,13 +229,12 @@ eu9 = nub a
 --
 -- 10
 --
--- Find the greatest product of five consecutive digits in 
--- the 1000-digit number.
---
 -- The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
 --
 -- Find the sum of all the primes below two million.
 --
 -----------------------------------------------------------
 
-eu10 = sum $ filter isPrime [2..1999999]
+eu10 = sum $ takeWhile (< 2000000) primes
+
+main = putStrLn . show $ eu10
