@@ -50,18 +50,29 @@ eu2 = sum fibs
 --
 -----------------------------------------------------------
 
-eu3 x = primeFactor x (squareRoot x)
+eu3 x = last . primeFactors $ x
 
-primeFactor :: Integral a => a -> a -> a
-primeFactor x d = if isFactor x d && isPrime d
-                    then d
-                    else primeFactor x (d-1)
+primes :: Integral a => [a]
+primes = 2 : iterate nextPrime 3
+
+nextPrime :: Integral a => a -> a
+nextPrime last
+  | any (isFactor start) (takeWhile (<= squareRoot start) primes) = nextPrime start
+  | otherwise = start
+      where start = last + 2
+
+primeFactors :: Integral a => a -> [a]
+primeFactors x = case factor of
+              Nothing -> [x]
+              Just f  -> f : primeFactors (x `div` f)
+            where 
+              factor = find (isFactor x) (takeWhile (<= squareRoot x) primes)
 
 squareRoot :: (Integral a) => a -> a
 squareRoot = floor . sqrt . (fromIntegral :: (Integral a) => a -> Double)
 
 isPrime :: (Integral a) => a -> Bool
-isPrime a = all (not . isFactor a) [2..(squareRoot a)]
+isPrime a = last (takeWhile (<= a) primes) == a
 
 -----------------------------------------------------------
 --
@@ -97,7 +108,7 @@ eu4 = maximum palindromes
 --
 -----------------------------------------------------------
 
-eu5 = foldl1 (*) . foldl1 merge $ map factors [2..20]
+eu5 = foldl1 (*) . foldl1 merge $ map primeFactors [2..20]
 
 merge :: (Eq a, Ord a) => [a] -> [a] -> [a]
 merge xs ys = merge' (sort xs) (sort ys)
@@ -110,12 +121,6 @@ merge' (x:xs) (y:ys)
   | x == y     = x : merge' xs ys
   | x < y      = x : merge' xs (y:ys)
   | otherwise  = y : merge' (x:xs) ys
-
-factors :: (Integral a) => a -> [a]
-factors x
-  | isPrime x = [x]
-  | otherwise = p:(factors (x `div` p))
-    where p = primeFactor x (squareRoot x)
 
 -----------------------------------------------------------
 --
