@@ -21,22 +21,14 @@ mkProduct matrix combo = foldl1 (*) (combo2Numbers matrix combo)
 combo2Numbers :: Matrix -> CoordCombo -> [Int]
 combo2Numbers matrix combo = map (\(x,y) -> (matrix !! x) !! y) combo  
 
+applyTupple :: Num a => ((a -> a), (a -> a)) -> (a,a) -> (a,a)
+applyTupple (fnL,fnR) (l,r) = (fnL l,fnR r)
+
 mkCombos :: Int -> Int -> Int -> [CoordCombo]
-mkCombos maxX maxY size = horizontal ++ vertical ++ lrDiagonal ++ rlDiagonal
-  where
-    horizontal = do
-      coorX <- [0..(maxX-size)]
-      coorY <- [0..(maxY-1)]
-      return [(x,y) | x <- [coorX..(coorX+size-1)], y <- [coorY]]
-    vertical = do
-      coorX <- [0..(maxX-1)]
-      coorY <- [0..(maxY-size)]
-      return [(x,y) | x <- [coorX], y <- [coorY..(coorY+size-1)]]
-    lrDiagonal = do
-      coorX <- [0..(maxX-size)]
-      coorY <- [0..(maxY-size)]
-      return [(coorX+s,coorY+s) | s <- [0..(size-1)]]
-    rlDiagonal = do
-      coorX <- [0..(maxX-size)]
-      coorY <- [(size-1)..(maxY-1)]
-      return [(coorX+s,coorY-s) | s <- [0..(size-1)]]
+mkCombos maxX maxY size = do
+  coorX <- [0..maxX-1]
+  coorY <- [0..maxY-1]
+  direction <- [((+1),id), (id,(+1)), ((+1),(+1)), ((+1),(subtract 1))]
+  let combos = [(x,y) | (x,y) <- take size $ iterate (applyTupple direction) (coorX,coorY)]
+  guard (all (\(a,b) -> 0 <= a && a < maxX && 0 <= b && b < maxY) combos)
+  return combos
