@@ -13,6 +13,6 @@ paths 1 = [1,1..]
 paths x = scanl1 (+) (paths (x-1))
 
 eu15 :: Int -> Integer
-eu15 x = (paths x) !! (x-1)
+eu15 x = (paths (x+1)) !! x
 
 main = getArgs >>= print . eu15 . read . head
