@@ -1,18 +1,14 @@
 import Data.List
+import Debug.Trace
 
-eu24 = concat . map show . (!! 999999) . sort . lexPerms $ [0..9]
+perms :: Int -> [Int] -> [Int]
+perms 1 xs = xs
+perms pos (x:xs)
+  | xsCombos >= pos  = x : perms pos xs
+  | otherwise       = perms (pos - xsCombos) (y:ys)
+    where factorial x = foldl1 (*) [1..x]
+          xsCombos = factorial (length xs)
+          y = minimum $ filter (> x) xs
+          ys = sort $ x : filter (/= y) xs
 
-lexPerms r = do
-  a <- r
-  b <- r \\ [a]
-  c <- r \\ (a:b:[])
-  d <- r \\ (a:b:c:[])
-  e <- r \\ (a:b:c:d:[])
-  f <- r \\ (a:b:c:d:e:[])
-  g <- r \\ (a:b:c:d:e:f:[])
-  h <- r \\ (a:b:c:d:e:f:g:[])
-  i <- r \\ (a:b:c:d:e:f:g:h:[])
-  j <- r \\ (a:b:c:d:e:f:g:h:i:[])
-  return (a:b:c:d:e:f:g:h:i:j:[])
-
---2783915460
+eu24 = concat . map show . perms 1000000 $ [0..9]
