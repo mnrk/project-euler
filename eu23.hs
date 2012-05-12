@@ -1,13 +1,18 @@
 import Data.List
 import Data.Array
+import System.Environment
 
-main = print . sum $ [1..28122] \\ additions
-  where additions = abundants `seq` [x+y | x <- abundants, y <- abundants, x+y < 28122]
+main = print . sum . filter notAddsMember $ [1..28123]
+  where notAddsMember x = not $ addsMembers ! x
 
-    --ab = listArray (12,28122) $ abundants
+addsMembers :: Array Int Bool
+addsMembers = accumArray (||) False (1,28123) $ map (\x -> (x,True)) additions
+
+additions :: [Int]
+additions = abundants `seq` [x+y | x <- abundants, y <- abundants, x+y <= 28123]
 
 abundants :: [Int]
-abundants = filter isAbundant [12..28122]
+abundants = filter isAbundant [12..28123]
   where isAbundant x = sum (divisors x) > x
 
 divisors :: Int -> [Int]
