@@ -11,4 +11,4 @@ perms pos (x:xs)
           y = minimum $ filter (> x) xs
           ys = sort $ x : filter (/= y) xs
 
-eu24 = concat . map show . perms 1000000 $ [0..9]
+main = print . concat . map show . perms 1000000 $ [0..9]
